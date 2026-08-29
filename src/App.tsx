@@ -1,13 +1,13 @@
 import Header from './Header'
-
-import { searchMovies } from './services/omdbMovieService'
-
-if (import.meta.env.DEV) {
-  ;(window as any).searchMovies = searchMovies
-}
+import HomeView from './pages/Home/HomeView'
 
 function App() {
-  return <Header />
+  return (
+    <>
+      <Header />
+      <HomeView />
+    </>
+  )
 }
 
 export default App

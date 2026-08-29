@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { getMovies } from './HomeModel'
+import { getMovies, initialMovies } from './HomeModel'
 import type { Movie } from '../../services/omdbMovieService'
 
 export function useHomeViewModel() {
@@ -8,6 +8,28 @@ export function useHomeViewModel() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    async function loadInitialMovies() {
+      setLoading(true)
+      setError('')
+
+      try {
+        const movieList = await initialMovies()
+        setMovies(movieList)
+      } catch (caughtError) {
+        setError(
+          caughtError instanceof Error
+            ? caughtError.message
+            : 'Unable to load movies.'
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    void loadInitialMovies()
+  }, [])
 
   async function handleSearch() {
     setLoading(true)

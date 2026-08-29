@@ -20,7 +20,10 @@ const API_URL = 'https://www.omdbapi.com/'
 export async function searchMovies(query: string): Promise<Movie[]> {
   const apiKey = import.meta.env.VITE_OMDB_API_KEY
 
+  console.log('[omdbMovieService] searchMovies called with query:', query)
+
   if (!apiKey) {
+    console.error('[omdbMovieService] Missing API key (VITE_OMDB_API_KEY)')
     throw new Error('Missing OMDb API key. Set VITE_OMDB_API_KEY in your environment.')
   }
 
@@ -29,15 +32,30 @@ export async function searchMovies(query: string): Promise<Movie[]> {
     s: query.trim(),
   })
 
-  const response = await fetch(`${API_URL}?${params.toString()}`)
+  const requestUrl = `${API_URL}?${params.toString()}`
+  // Mask the API key when logging the URL
+  const maskedUrl = requestUrl.replace(apiKey, '***')
+  console.log('[omdbMovieService] Fetching URL:', maskedUrl)
+
+  const response = await fetch(requestUrl)
 
   if (!response.ok) {
+    console.error(
+      `[omdbMovieService] HTTP error: ${response.status} ${response.statusText}`
+    )
     throw new Error(`OMDb request failed (${response.status} ${response.statusText}).`)
   }
 
   const data: OmdbSearchResponse = await response.json()
 
+  console.log(
+    `[omdbMovieService] OMDb response: Response=${data.Response}, totalResults=${data.totalResults}, results=${
+      data.Search?.length ?? 0
+    }`
+  )
+
   if (data.Response === 'False') {
+    console.error('[omdbMovieService] OMDb returned error:', data.Error)
     throw new Error(data.Error ?? 'OMDb returned an error for this search.')
   }
 
@@ -48,4 +66,9 @@ export const omdbMovieService = {
   searchMovies,
 }
 
+
 export default omdbMovieService
+
+if (import.meta.env.DEV) {
+  ;(window as any).searchMovies = searchMovies
+}

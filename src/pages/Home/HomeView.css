@@ -1,0 +1,8 @@
+.movie-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  margin: 0;
+  list-style: none;
+}

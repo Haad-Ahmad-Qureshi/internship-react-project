@@ -1,4 +1,6 @@
+import { MovieCard } from '../../components/MovieCard/MovieCard'
 import { useHomeViewModel } from './useHomeViewModel'
+import './HomeView.css'
 
 export function HomeView() {
   const { movies, loading, error } = useHomeViewModel()
@@ -8,14 +10,12 @@ export function HomeView() {
       {loading && <p>Loading movies...</p>}
       {error && <p role="alert">{error}</p>}
 
-      <ul>
+      <ul className="movie-grid">
         {movies.map((movie) => (
-          <li key={movie.imdbID}>
-            <img src={movie.Poster} alt={`${movie.Title} poster`} />
-            <h2>{movie.Title}</h2>
-            <p>Year: {movie.Year}</p>
-            <p>Type: {movie.Type}</p>
-          </li>
+          <MovieCard
+            key={movie.imdbID}
+            movie={movie}
+          />
         ))}
       </ul>
     </main>

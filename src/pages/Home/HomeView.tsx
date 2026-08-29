@@ -1,27 +1,10 @@
 import { useHomeViewModel } from './useHomeViewModel'
 
 export function HomeView() {
-  const { query, setQuery, movies, loading, error, handleSearch } =
-    useHomeViewModel()
+  const { movies, loading, error } = useHomeViewModel()
 
   return (
     <main>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault()
-          void handleSearch()
-        }}
-      >
-        <label htmlFor="movie-search">Search movies</label>
-        <input
-          id="movie-search"
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <button type="submit">Search</button>
-      </form>
-
       {loading && <p>Loading movies...</p>}
       {error && <p role="alert">{error}</p>}
 

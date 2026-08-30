@@ -17,24 +17,26 @@ export function FavouritesView() {
 
       {error && <p role="alert">{error}</p>}
 
-      {!loading && favourites.length === 0 && !error && (
+      {!loading && !error && favourites.length === 0 && (
         <p>You don't have any favourite movies yet.</p>
       )}
 
-      <section>
-        {favourites.map((movie) => (
-          <div key={movie.imdbID}>
-            <MovieCard movie={movie} />
+      {!loading && !error && favourites.length > 0 && (
+        <section>
+          {favourites.map((movie) => (
+            <div key={movie.imdbID}>
+              <MovieCard movie={movie} />
 
-            <button
-              type="button"
-              onClick={() => void removeMovie(movie.imdbID)}
-            >
-              Remove from Favourites
-            </button>
-          </div>
-        ))}
-      </section>
+              <button
+                type="button"
+                onClick={() => void removeMovie(movie.imdbID)}
+              >
+                Remove from Favourites
+              </button>
+            </div>
+          ))}
+        </section>
+      )}
     </main>
   )
 }

@@ -1,13 +1,17 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+
+import { useAuth } from './context/AuthContext'
+
 import './Header.css'
 
 function Header() {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
 
   function handleHomeClick() {
-    window.location.href = '/'
+    navigate('/')
   }
 
   function handleSearch() {
@@ -18,6 +22,11 @@ function Header() {
     }
 
     navigate(`/?search=${encodeURIComponent(cleanedQuery)}`)
+  }
+
+  async function handleLogout() {
+    await logout()
+    navigate('/')
   }
 
   return (
@@ -37,6 +46,16 @@ function Header() {
         >
           Favourites
         </NavLink>
+
+        {user && (
+          <button
+            type="button"
+            className="header-link"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        )}
       </nav>
 
       <div className="header-search">

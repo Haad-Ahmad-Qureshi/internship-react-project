@@ -1,8 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import {
-  getAuth,
-  type User,
-} from 'firebase/auth'
+import { getAuth } from 'firebase/auth'
 import {
   getFirestore,
   collection,
@@ -29,20 +26,66 @@ export const auth = getAuth(firebaseApp)
 
 export const db = getFirestore(firebaseApp)
 
-const favouritesCollection = collection(db, 'favourites')
+export async function addFavourite(
+  userId: string,
+  movie: Movie
+): Promise<void> {
+  if (!userId) {
+    throw new Error('User ID is required to add a favourite.')
+  }
 
-export async function addFavourite(movie: Movie): Promise<void> {
-  await setDoc(doc(favouritesCollection, movie.imdbID), movie)
+  const favouritesCollection = collection(
+    db,
+    'users',
+    userId,
+    'favourites'
+  )
+
+  await setDoc(
+    doc(favouritesCollection, movie.imdbID),
+    movie
+  )
 }
 
-export async function removeFavourite(imdbID: string): Promise<void> {
-  await deleteDoc(doc(favouritesCollection, imdbID))
+export async function removeFavourite(
+  userId: string,
+  imdbID: string
+): Promise<void> {
+  if (!userId) {
+    throw new Error('User ID is required to remove a favourite.')
+  }
+
+  const favouritesCollection = collection(
+    db,
+    'users',
+    userId,
+    'favourites'
+  )
+
+  await deleteDoc(
+    doc(favouritesCollection, imdbID)
+  )
 }
 
-export async function getFavourites(): Promise<Movie[]> {
+export async function getFavourites(
+  userId: string
+): Promise<Movie[]> {
+  if (!userId) {
+    throw new Error('User ID is required to load favourites.')
+  }
+
+  const favouritesCollection = collection(
+    db,
+    'users',
+    userId,
+    'favourites'
+  )
+
   const snapshot = await getDocs(favouritesCollection)
 
-  return snapshot.docs.map((document) => document.data() as Movie)
+  return snapshot.docs.map(
+    (document) => document.data() as Movie
+  )
 }
 
 export default db

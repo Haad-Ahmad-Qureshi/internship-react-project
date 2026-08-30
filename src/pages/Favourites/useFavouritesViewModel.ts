@@ -6,19 +6,28 @@ import {
   saveFavourite,
 } from './FavouritesModel'
 
+import { useAuth } from '../../context/AuthContext'
+
 import type { Movie } from '../../services/omdbMovieService'
 
 export function useFavouritesViewModel() {
+  const { user } = useAuth()
+
   const [favourites, setFavourites] = useState<Movie[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   async function loadMovies() {
+    if (!user) {
+      setFavourites([])
+      return
+    }
+
     setLoading(true)
     setError('')
 
     try {
-      const movies = await loadFavourites()
+      const movies = await loadFavourites(user.uid)
       setFavourites(movies)
     } catch (caughtError) {
       setError(
@@ -32,10 +41,15 @@ export function useFavouritesViewModel() {
   }
 
   async function saveMovie(movie: Movie) {
+    if (!user) {
+      setError('You must be signed in to add favourites.')
+      return
+    }
+
     setError('')
 
     try {
-      await saveFavourite(movie)
+      await saveFavourite(user.uid, movie)
 
       setFavourites((currentFavourites) => {
         const alreadyExists = currentFavourites.some(
@@ -58,11 +72,16 @@ export function useFavouritesViewModel() {
   }
 
   async function removeMovie(imdbID: string) {
+    if (!user) {
+      setError('You must be signed in to remove favourites.')
+      return
+    }
+
     setLoading(true)
     setError('')
 
     try {
-      await deleteFavourite(imdbID)
+      await deleteFavourite(user.uid, imdbID)
 
       setFavourites((currentFavourites) =>
         currentFavourites.filter(
@@ -82,7 +101,7 @@ export function useFavouritesViewModel() {
 
   useEffect(() => {
     void loadMovies()
-  }, [])
+  }, [user])
 
   return {
     favourites,

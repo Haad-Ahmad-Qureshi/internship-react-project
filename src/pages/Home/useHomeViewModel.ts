@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { getMovies, initialMovies } from './HomeModel'
+import { useAuth } from '../../context/AuthContext'
+import { useFavouritesViewModel } from '../Favourites/useFavouritesViewModel'
+
 import type { Movie } from '../../services/omdbMovieService'
 
 export function useHomeViewModel() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  const { user } = useAuth()
+  const { saveMovie } = useFavouritesViewModel()
 
   const [query, setQuery] = useState('')
   const [movies, setMovies] = useState<Movie[]>([])
@@ -44,12 +51,22 @@ export function useHomeViewModel() {
     void loadMovies()
   }, [searchQuery])
 
+  function handleFavourite(movie: Movie) {
+    if (!user) {
+      navigate('/favourites')
+      return
+    }
+
+    void saveMovie(movie)
+  }
+
   return {
     query,
     setQuery,
     movies,
     loading,
     error,
+    handleFavourite,
   }
 }
 

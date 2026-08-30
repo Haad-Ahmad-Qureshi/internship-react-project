@@ -1,0 +1,24 @@
+.favourite-item {
+  display: flex;
+  flex-direction: column;
+  height: 570px;
+}
+
+.remove-favourite-button {
+  width: 100%;
+  height: 40px;
+  margin-top: 10px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.remove-favourite-button:hover {
+  background: #b91c1c;
+}

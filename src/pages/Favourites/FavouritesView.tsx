@@ -1,5 +1,7 @@
 import { MovieCard } from '../../components/MovieCard/MovieCard'
 import { useFavouritesViewModel } from './useFavouritesViewModel'
+import '../Home/HomeView.css'
+import './FavouritesView.css'
 
 export function FavouritesView() {
   const {
@@ -22,20 +24,24 @@ export function FavouritesView() {
       )}
 
       {!loading && !error && favourites.length > 0 && (
-        <section>
+        <ul className="movie-grid">
           {favourites.map((movie) => (
-            <div key={movie.imdbID}>
+            <li
+              key={movie.imdbID}
+              className="favourite-item"
+            >
               <MovieCard movie={movie} />
 
               <button
+                className="remove-favourite-button"
                 type="button"
                 onClick={() => void removeMovie(movie.imdbID)}
               >
                 Remove from Favourites
               </button>
-            </div>
+            </li>
           ))}
-        </section>
+        </ul>
       )}
     </main>
   )

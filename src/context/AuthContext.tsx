@@ -3,7 +3,6 @@ import {
   useContext,
   useEffect,
   useState,
-  type ReactNode,
 } from 'react'
 
 import type { User } from 'firebase/auth'
@@ -13,6 +12,8 @@ import {
   subscribeToAuthChanges,
 } from '../services/authService'
 
+import type { AuthProviderProps } from '../types/auth'
+
 interface AuthContextValue {
   user: User | null
   authLoading: boolean
@@ -20,10 +21,6 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
-
-interface AuthProviderProps {
-  children: ReactNode
-}
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
@@ -64,3 +61,4 @@ export function useAuth() {
 }
 
 export default AuthContext
+

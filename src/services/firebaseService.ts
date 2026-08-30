@@ -1,6 +1,18 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import {
+  getAuth,
+  type User,
+} from 'firebase/auth'
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  deleteDoc,
+  getDocs,
+} from 'firebase/firestore'
+
+import type { Movie } from './omdbMovieService'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,6 +26,23 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig)
 
 export const auth = getAuth(firebaseApp)
+
 export const db = getFirestore(firebaseApp)
+
+const favouritesCollection = collection(db, 'favourites')
+
+export async function addFavourite(movie: Movie): Promise<void> {
+  await setDoc(doc(favouritesCollection, movie.imdbID), movie)
+}
+
+export async function removeFavourite(imdbID: string): Promise<void> {
+  await deleteDoc(doc(favouritesCollection, imdbID))
+}
+
+export async function getFavourites(): Promise<Movie[]> {
+  const snapshot = await getDocs(favouritesCollection)
+
+  return snapshot.docs.map((document) => document.data() as Movie)
+}
 
 export default db

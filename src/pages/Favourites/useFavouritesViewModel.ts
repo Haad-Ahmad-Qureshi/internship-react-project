@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import {
   deleteFavourite,
   loadFavourites,
+  saveFavourite,
 } from './FavouritesModel'
 
 import type { Movie } from '../../services/omdbMovieService'
@@ -27,6 +28,32 @@ export function useFavouritesViewModel() {
       )
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function saveMovie(movie: Movie) {
+    setError('')
+
+    try {
+      await saveFavourite(movie)
+
+      setFavourites((currentFavourites) => {
+        const alreadyExists = currentFavourites.some(
+          (favourite) => favourite.imdbID === movie.imdbID
+        )
+
+        if (alreadyExists) {
+          return currentFavourites
+        }
+
+        return [...currentFavourites, movie]
+      })
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : 'Unable to add movie to favourites.'
+      )
     }
   }
 
@@ -62,6 +89,7 @@ export function useFavouritesViewModel() {
     loading,
     error,
     loadMovies,
+    saveMovie,
     removeMovie,
   }
 }

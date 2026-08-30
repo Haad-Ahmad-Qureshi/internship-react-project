@@ -3,9 +3,13 @@ import './MovieCard.css'
 
 interface MovieCardProps {
   movie: Movie
+  onFavourite?: (movie: Movie) => void
 }
 
-export function MovieCard({ movie }: MovieCardProps) {
+export function MovieCard({
+  movie,
+  onFavourite,
+}: MovieCardProps) {
   return (
     <article className="movie-card">
       <img
@@ -19,7 +23,10 @@ export function MovieCard({ movie }: MovieCardProps) {
         <p>Year: {movie.Year}</p>
         <p>Type: {movie.Type}</p>
 
-        <button type="button">
+        <button
+          type="button"
+          onClick={() => onFavourite?.(movie)}
+        >
           Favourite
         </button>
       </div>
